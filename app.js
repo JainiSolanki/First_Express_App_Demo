@@ -1,6 +1,14 @@
 const express = require('express')
+const mongoose = require('mongoose')
+
+mongoose.connect("mongodb://localhost:27017/mongo_shell_demo")
+.then(() => console.log("Mongo DB Connected"))
+.catch(err => console.log("Error in connection "+err))
 const app = express()
 const port = 3000
+
+//Model
+const cat = mongoose.model('cat', {No1: Number, No2: Number});
 //Express JS
 //SEO
 //Navigation
@@ -41,10 +49,21 @@ app.get('/sum',(req,res)=>{
     //res.send("Welcome")
     res.sendFile(__dirname+'/sum.html')
 })
+//api
+app.get('/sumapi', (req,res)=>{  //api
+    cat.find()
+        .then(data=>{
+            res.json(data);
+        })
+})
 //dynamic user value in url
 app.get('/sumprocess',(req,res)=>{
     var a = req.query.txt1
     var b = req.query.txt2
+    //mongo data store
+    const kitty = new cat({No1:a,No2:b});
+    kitty.save().then(()=>console.log("Record Added"));
+
     var c = parseInt(a) + parseInt(b)
     res.send(`A value is ${a}<br/> B value is ${b}<br/> Sum is ${c}`)
 })
